@@ -1,0 +1,123 @@
+<!DOCTYPE html><html lang="uz">
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta charset="UTF-8">
+<title>Reels Smooth Scroll</title>
+<style>
+  body {
+    margin: 0;
+    background: #000;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    font-family: Arial, sans-serif;
+  }
+  .post {
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+  }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .title {
+    position: absolute;
+    bottom: 60px;
+    left: 20px;
+    color: #fff;
+    font-size: 20px;
+    text-shadow: 0 0 10px #000;
+  }
+  .download-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    background: rgba(255,255,255,0.8);
+    color: #000;
+    padding: 10px 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  .download-btn:hover {
+    background: rgba(255,255,255,1);
+  }
+</style>
+</head>
+<body><div id="feed"></div><script>
+// Videolar ro'yxati
+let videos = [
+  "https://pages111.github.io/video/VID_20251128_120459_430.mp4",
+  "https://pages111.github.io/video/VID_20251128_121221_180.mp4",
+  "https://pages111.github.io/video/VID_20251128_122137_351.mp4",
+  "https://pages111.github.io/video/VID_20251128_122455_934.mp4"
+];
+
+// Random tartibda
+videos.sort(() => Math.random() - 0.5);
+
+const feed = document.getElementById("feed");
+
+// HTMLga joylash
+videos.forEach((v, i) => {
+  feed.innerHTML += `
+    <div class="post">
+      <video src="${v}" playsinline muted></video>
+      <div class="title">Reel ${i + 1}</div>
+      <a class="download-btn" href="#" data-url="${v}">⬇️ Yuklab olish</a>
+    </div>
+  `;
+});
+
+const allVideos = document.querySelectorAll(".post video");
+const downloadButtons = document.querySelectorAll(".download-btn");
+
+// IntersectionObserver orqali smooth auto-play
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      allVideos.forEach(v => v.pause());
+      entry.target.play().catch(()=>{});
+    }
+  });
+}, { threshold: 0.7 });
+
+allVideos.forEach(video => observer.observe(video));
+
+// Sahifaga kirgan zahoti birinchi video o'ynasin (muted)
+window.addEventListener("load", () => {
+  if(allVideos.length > 0) allVideos[0].play().catch(()=>{});
+});
+
+// Foydalanuvchi sahifaga birinchi marta tegsa, ovozni yoqish
+document.body.addEventListener("click", () => {
+  allVideos.forEach(v => v.muted = false);
+}, { once: true });
+
+// Download tugmasi Mini App uchun havola ochadi
+downloadButtons.forEach(btn => {
+  btn.addEventListener("click", e => {
+    e.preventDefault();
+    const url = btn.dataset.url;
+    if(window.Telegram?.WebApp?.openLink){
+      // Telegram Mini App ichida havola ochish
+      Telegram.WebApp.openLink(url);
+    } else {
+      // Oddiy brauzer uchun fallback
+      window.open(url, "_blank");
+    }
+  });
+});
+
+// Ortga tugmasi bosilganda Mini App yopilmasin
+if(window.Telegram?.WebApp){
+  Telegram.WebApp.onEvent('backButtonClicked', () => {
+    // Hech narsa qilmaymiz, Mini App yopilmaydi
+    console.log("Ortga tugma bosildi");
+  });
+}
+</script></body>
+</html>
