@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>⚡️ AI Rasm Generator (Premium Style)</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
-    
-    <script src='//libtl.com/sdk.js' data-zone='10326272' data-sdk='show_10326272'></script>
-    
     <style>
-        /* Ranglar palitrasi (Ko'k-yashil ohanglar) */
+        /* YANGI Ranglar palitrasi (Qizil-Sariq ohanglar) */
         :root {
-            --primary-color: #00bcd4; /* Cyan - Asosiy rang */
-            --primary-dark: #0097a7;
-            --secondary-color: #8bc34a; /* Och yashil - Ikkilamchi rang */
-            --bg-color: #e0e5ec; /* Yumshoq Neumorphic fon */
-            --text-color: #3f51b5; /* Indigoda matn */
+            --primary-color: #ff9800; /* To'q Sariq (Amber) - Asosiy rang */
+            --primary-dark: #f57c00;  /* To'qroq Sariq */
+            --secondary-color: #f44336; /* Qizil - Ikkilamchi rang */
+            --bg-color: #e0e5ec; /* Yumshoq Neumorphic fon (O'zgarmadi) */
+            --text-color: #d32f2f; /* To'q Qizil/Qizg'ish matn */
             --shadow-light: #ffffff;
             --shadow-dark: #a3b1c6;
         }
@@ -138,6 +135,15 @@
             display: none;
             margin-top: 20px;
         }
+
+        /* Dizayn rasmi uchun (Avvalgi rasm qo'shilgan joydan olib tashlandi, faqat stil qoldi) */
+        #designImage {
+            width: 100%;
+            height: auto;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 5px 5px 10px var(--shadow-dark), -5px -5px 10px var(--shadow-light);
+        }
         
         /* Planshet va Kompyuter uchun moslashuv */
         @media (min-width: 768px) {
@@ -152,11 +158,14 @@
             }
         }
     </style>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body>
 
 <div class="container">
     <h1>🎨 AI Image Creator</h1>
+
+
 
     <label for="prompt">Image Text (Prompt):</label>
     <input type="text" id="prompt" placeholder="Misol: Tungi shaharda uchib ketayotgan ajdaho, neon yorug'lik">
@@ -182,18 +191,20 @@
         </div>
     </div>
 
-    <button id="generateBtn" class="button-style" onclick="generateImage()">🚀 RASM YARATISH</button>
+    <button id="generateBtn" class="button-style" onclick="generateImage()">🚀 CREATING A PICTURE</button>
 
     <div id="resultContainer">
-        <p class="loading" id="loadingMessage">⏳ Rasm yaratilmoqda, iltimos kuting...</p>
-        <img id="resultImage" alt="Yaratilgan rasm shu yerda paydo bo'ladi">
-        <button id="downloadBtn" class="button-style" onclick="downloadImage()">⬇️ RASMNI YUKLAB OLISH</button>
-        <p style="margin-top: 15px; font-size: 14px; color: #757575;">*Agar yuklab olish tugmasi ishlamasa, rasm ustiga uzoq bosib "Rasmni saqlash"ni tanlang.</p>
+        <p class="loading" id="loadingMessage">⏳ Image is being created, please wait....</p>
+        <img id="resultImage" alt="The created image will appear here">
+        <button id="downloadBtn" class="button-style" onclick="downloadImage()">⬇️ DOWNLOAD IMAGE</button>
+        <p style="margin-top: 15px; font-size: 14px; color: #757575;">*If the download button doesn't work, long press on the image and select "Save image".</p>
     </div>
 </div>
 
 <script>
-    // --- Asosiy rasm yaratish logikasi ---
+    // --- AdsGram integratsiyasi boshlanishi ---
+    
+    // Asosiy rasm yaratish logikasini alohida funksiyaga o'tkazamiz
     function createPollinationsImage() {
         const userPrompt = document.getElementById('prompt').value.trim();
         const styleSuffix = document.getElementById('style').value;
@@ -213,7 +224,7 @@
         // Interfeysni yangilash (Yuklanmoqda holati)
         resultImage.style.display = 'none';
         downloadBtn.style.display = 'none';
-        loadingMessage.textContent = '⏳ Rasm yaratilmoqda, iltimos kuting...';
+        loadingMessage.textContent = '⏳ Image is being created, please wait...';
         loadingMessage.style.display = 'block';
         loadingMessage.style.color = 'var(--primary-color)';
         resultImage.src = ''; 
@@ -228,53 +239,57 @@
         };
 
         resultImage.onerror = () => {
-            loadingMessage.textContent = '❌ Rasm yaratishda xato yuz berdi. Iltimos, boshqa matn yoki oʻlcham bilan urinib koʻring.';
+            loadingMessage.textContent = '❌ There was an error creating the image. Please try with different text or size..';
             loadingMessage.style.color = 'red';
             resultImage.style.display = 'none';
             downloadBtn.style.display = 'none';
         };
     }
 
-    // --- Reklama bilan rasm yaratish funksiyasi ---
+    // "Rasm Yaratish" tugmasini bosganda ishlaydigan yangi funksiya (Reklama bilan)
     function generateImage() {
         const userPrompt = document.getElementById('prompt').value.trim();
 
         if (userPrompt === "") {
-            alert("Iltimos, rasm uchun matn kiriting!");
+            alert("Please enter text for the image.!");
             return;
         }
-        
-        // Monetag funksiyasi mavjudligini tekshirish (Endi SDK ulangan)
-        if (typeof show_10326272 === 'function') {
-            
-            // Reklamani ko'rsatish
-            show_10326272().then(() => {
-                // Reklama muvaffaqiyatli ko'rildi
-                console.log('Foydalanuvchi reklamani koʻrdi. Rasm yaratish boshlanmoqda.');
-                alert('Reklamani koʻrganingiz uchun rahmat! Rasm yaratilmoqda.'); 
-                createPollinationsImage(); // Rasm yaratishni boshlash
-            }).catch(() => {
-                // Reklama muvaffaqiyatsiz tugadi (Masalan, o'tkazib yuborildi)
-                console.log('Reklama ishlamadi yoki oʻtkazib yuborildi. Alternativ yoʻl ishlatilmoqda.');
-                alert('Reklama toʻliq koʻrsatilmadi. Iltimos, qayta urinib koʻring yoki reklamasiz yaratishga urinilmoqda.');
+
+        // 1. AdsGram Controller'ni ishga tushirish (SDK yuklanganligiga ishonch hosil qilish)
+        if (window.Adsgram) {
+            const AdController = window.Adsgram.init({ blockId: "int-19147" }); // !!! BU YERGA O'ZINGIZNING ID'INGIZNI QO'YING !!!
+
+            // 2. Reklamani ko'rsatish
+            AdController.show().then((result) => {
+                // Reklama muvaffaqiyatli tugagan (foydalanuvchi ko'rdi yoki yopdi)
+                if (result.done) {
+                    createPollinationsImage(); // Muvaffaqiyatli tugagach rasm yaratishni boshlash
+                } else {
+                    alert("Reklama to'liq ko'rsatilmadi yoki o'tkazib yuborildi. Iltimos, qayta urinib ko'ring.");
+                }
+            }).catch((result) => {
+                // Reklamani ko'rsatishda xato yuz berdi (Masalan, yuklanmadi)
+                console.error("Adsgram xatosi:", result);
+                alert("Reklamani yuklashda xatolik yuz berdi. Reklamasiz yaratishga urinilmoqda.");
                 createPollinationsImage(); // Xato bo'lsa ham rasm yaratishni boshlash (alternativ yo'l)
             });
-
         } else {
-            // Agar Monetag SDK funksiyasi (show_10326272) topilmasa
-            console.warn("Monetag SDK funksiyasi topilmadi. To'g'ridan-to'g'ri rasm yaratishga urinilmoqda.");
+            // Agar AdsGram SDK yuklanmagan bo'lsa
             alert("Reklama xizmati yuklanmadi. Rasm yaratishni boshlash.");
             createPollinationsImage();
         }
     }
     
-    // --- Yuklab olish funksiyasi ---
+    // --- AdsGram integratsiyasi tugashi ---
+
+    // Yuklab olish funksiyasi (o'zgarishsiz qoldirildi)
     function downloadImage() {
         const resultImage = document.getElementById('resultImage');
         if (resultImage.src && resultImage.style.display !== 'none') {
+            // Yangi sahifada rasmni ochishga urinish
             window.open(resultImage.src, '_blank');
         } else {
-            alert("Yuklab olish uchun rasm mavjud emas!");
+            alert("No image available for download.!");
         }
     }
 </script>
